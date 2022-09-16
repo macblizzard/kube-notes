@@ -9,7 +9,7 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 ## Kubernetes Commands:
 #### to see the nodes:
-```bash
+```
 kubectl get nodes
 ```
 
@@ -19,31 +19,45 @@ kubectl cluster-info
 ```
 
 #### to run a docker container on a pod:
-```fish
+```
 kubectl run kubetest —image=nginx:latest —port=80
 ```
 
-to see running pods:
+#### to see running pods:
+```
 kubectl get pods
+```
 
-for detailed pod info:
+#### to see detailed pod info:
+```
 kubectl get pods -o wide
+```
 
-to see all info about running pods:
+#### to see all info about running pods:
+```
 kubectl describe pods
+```
 
-to delete pods:
+#### to delete pods:
+```
 kubectl delete pods mywebsite
+```
 
-to apply a kubernetes deployment file:
+#### to apply a kubernetes deployment file:
+```
 kubectl apply -f mydeplyment.yaml
+```
 
-to check running deployments:
+#### to check running deployments:
+```
 kubectl get deployments 
+```
 
-to increase number of replicas running the deployment:
-edit the running deployment with:
+#### to increase number of replicas running the deployment:
+Edit the running deployment with:
+```
 kubectl edit deployment mydeployment
+```
 
 change number of “replicas” on that config and save the file and check pods again:
 kubectl get pods (number of running pods should change)
