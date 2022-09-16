@@ -18,8 +18,10 @@ kubectl get nodes
 kubectl cluster-info
 ```
 
-to run a docker container on a pod:
+#### to run a docker container on a pod:
+```fish
 kubectl run kubetest —image=nginx:latest —port=80
+```
 
 to see running pods:
 kubectl get pods
