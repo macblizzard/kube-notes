@@ -9,7 +9,7 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 ## Kubernetes Commands:
 #### to see the nodes:
-´´´
+´´´bash
 kubectl get nodes
 ´´´
 
