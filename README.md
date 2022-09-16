@@ -13,8 +13,10 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 kubectl get nodes
 ```
 
-to see the cluster info:
+#### to see the cluster info:
+```
 kubectl cluster-info
+```
 
 to run a docker container on a pod:
 kubectl run kubetest —image=nginx:latest —port=80
