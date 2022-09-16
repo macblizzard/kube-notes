@@ -274,7 +274,7 @@ kubectl create deployment nginx --image=nginx --replicas=4 --dry-run=client -o y
 kubectl expose pod redis --port=6379 --name redis-service --dry-run=client -o yaml
 ```
 
-(This will automatically use the pod's labels as selectors)
+This will automatically use the pod's labels as selectors
 
 Or,
 
@@ -282,14 +282,14 @@ Or,
 kubectl create service clusterip redis --tcp=6379:6379 --dry-run=client -o yaml 
 ```
 
-(This will not use the pods labels as selectors, instead it will assume selectors as app=redis. You cannot pass in selectors as an option. So it does not work very well if your pod has a different label set. So generate the file and modify the selectors before creating the service)
+This will not use the pods labels as selectors, instead it will assume selectors as app=redis. You cannot pass in selectors as an option. So it does not work very well if your pod has a different label set. So generate the file and modify the selectors before creating the service
 
 #### Create a Service named nginx of type NodePort to expose pod nginx's port 80 on port 30080 on the nodes:
 ```
 kubectl expose pod nginx --type=NodePort --port=80 --name=nginx-service --dry-run=client -o yaml
 ```
 
-(This will automatically use the pod's labels as selectors, but you cannot specify the node port. You have to generate a definition file and then add the node port in manually before creating the service with the pod.)
+This will automatically use the pod's labels as selectors, but you cannot specify the node port. You have to generate a definition file and then add the node port in manually before creating the service with the pod.
 
 Or,
 
@@ -297,7 +297,7 @@ Or,
 kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=client -o yaml
 ```
 
-(This will not use the pods labels as selectors)
+This will not use the pods labels as selectors
 
 Both the above commands have their own challenges. While one of it cannot accept a selector the other cannot accept a node port. I would recommend going with the kubectl expose command. If you need to specify a node port, generate a definition file using the same command and manually input the nodeport before creating the service.
 
@@ -458,127 +458,188 @@ preferredDuringSchedulingIgnoredDuringExecution
 ```
 
 ---
-minikube:
+## Minikube:
 
-install minikube on local machine:
+#### Install minikube on local machine:
+```
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```
 
-start a sample cluster:
+#### Start a sample cluster:
+```
 minikube start
+```
 
-check the pods of cluster:
+#### Check the pods of cluster:
+```
 kubectl get po -A
+```
 
-if minikube not installed:
+#### If minikube not installed:
+```
 minikube kubectl -- get po -A
+```
 
-if you need to make using minikube simpler:
+#### If you need to make using minikube simpler:
+```
 alias kubectl="minikube kubectl --"
+```
 
-to check kubernetes dashboard:
+#### To check kubernetes dashboard:
+```
 minikube dashboard
+```
 
-to deploy kubernetes dashbaord outside minikube:
+#### To deploy kubernetes dashbaord outside minikube:
+```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
+```
 
 You can enable access to the Dashboard using the kubectl command-line tool, by running the following command:
-
+```
 kubectl proxy
-Kubectl will make Dashboard available at http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
+```
+Kubectl will make Dashboard available at:
+```
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
+```
 
-to create a sample deployment and expose it on port 8080:
+#### To create a sample deployment and expose it on port 8080:
+```
 kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.4
 kubectl expose deployment hello-minikube --type=NodePort --port=8080
+```
 
-to check deployment:
+#### To check deployment:
+```
 kubectl get services hello-minikube
+```
 
-to access this service let minikube launch a web browser for you:
+#### To access this service let minikube launch a web browser for you:
+```
 minikube service hello-minikube
+```
 
-alternatively, use kubectl to forward the port:
+Alternatively, use kubectl to forward the port:
+```
 kubectl port-forward service/hello-minikube 7080:8080
+```
 
 ---
-to install HELM:
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+#### To install HELM:
 
-to add a helm repo:
+```
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
+#### To add a helm repo:
+```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
+```
 
-to install apps (eg. nginx) from helm repo:
+#### To install apps (eg. nginx) from helm repo:
+```
 helm install my-nginx-test bitnami/nginx
+```
 
-to uninstall/delete a helm chart/deployment:
+#### To uninstall/delete a helm chart/deployment:
+```
 helm delete my-release
+```
 
-to check the status of the service deployment:
+#### To check the status of the service deployment:
+```
 kubectl get svc --namespace default -w my-nginx-test
 or,
 kubectl get services my-nginx-test
+```
 
-to expose a port for the latest deployment:
+#### To expose a port for the latest deployment:
+```
 kubectl expose deployment my-nginx-test --type=NodePort --port=80
+```
 
-to forward the exposed port of the deployment to the localhost:
+#### To forward the exposed port of the deployment to the localhost:
+```
 kubectl port-forward service/my-nginx-test 4000:80
+```
 
+#### To download and unpack helm package for an application:
+```
 helm fetch stable/traefik --untar
 helm pull
 helm init
+```
 
 ---
-install portainer using helm:
-
+#### Install portainer using helm:
+```
 helm repo add portainer https://portainer.github.io/k8s/
 helm repo update
 helm install --create-namespace -n portainer portainer portainer/portainer \
     --set service.type=LoadBalancer
+```
 
-or if using traefik then,
+Or, if using traefik then,
+```
 helm install --create-namespace -n portainer portainer portainer/portainer
+```
 
-or if using microk8s, then
+Or. if using microk8s, then
+```
 microk8s.enable community
 microk8s.enable portainer
+```
 
-and then apply the portainer-ing-svc-tls.yaml template from kubernetes yamls directory
+And then apply the portainer-ing-svc-tls.yaml template from kubernetes yamls directory
 
-to update portainer version:
+#### To update portainer version:
+```
 helm repo update
 helm upgrade -n portainer portainer portainer/portainer
+```
 
-source:
+Source:
 https://docs.portainer.io/v/ce-2.9/start/install/server/kubernetes/wsl
 
 ---
-install wordpress using helm:
-
+#### Install wordpress using helm:
+```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
+```
 
 Setting up wordpress directly from helm along with mariadb is always giving error.
 So, best way is setting up mariadb and wordpress separately.
 
 First, save the helm values for mariadb:
+```
 helm show values bitnami/mariadb > /tmp/mariadb-values.yaml
+```
 
 Change the following and save:
+```
 auth:
   rootPassword: "password"
   database: wp_db
   username: "user"
   password: "password"
+```
 
 Now, install mariadb with the modified helm values:
+```
 helm install mariadb bitnami/mariadb --values /tmp/mariadb-values.yaml
+```
 
 Now, save the helm values for wordpress:
+```
 helm show values bitnami/wordpress > /tmp/wp-values.yaml
+```
 
 Change the following and save:
+```
 wordpressUsername: user
 wordpressPassword: "password"
 allowEmptyPassword: false
@@ -592,11 +653,14 @@ externalDatabase:
   user: user
   password: "password"
   database: wp_db
+```
 
 Now, install wordpress with modified helm values:
+```
 helm install wordpress bitnami/wordpress --values /tmp/wp-values.yaml
- 
-and then apply the wp-ingroute-tls.yaml template from kubernetes yamls directory
+```
+
+And then apply the wp-ingroute-tls.yaml template from kubernetes yamls directory
 
 ---
 Q: Can containers reach back to host services via host.docker.internal?
@@ -613,22 +677,23 @@ A: On Windows, you can add a program to startup programs list in different ways.
 - Restart your machine.
 
 ---
-kubernetes cluster on cloud providers:
+## Kubernetes Cluster on Cloud Providers:
 
-add minimum 2-3 worker nodes
+Add minimum 2-3 worker nodes
 
-download and setup kubectl on host machine
+Download and setup kubectl on host machine
 
-download the kubeconfig.yml or save the config in a file on host machine
-
+Download the kubeconfig.yml or save the config in a file on host machine
+```
 export environment variable for kubeconfig:
 export KUBECONFIG=~/kubeconfig.yml
+```
 
 ---
-to have all mywebsite reachable through a central address (ip) the deployment needs a service that will load balance and also expose the pods
-to achieve this we need another file preferably named mywebsite_service.yaml
+To have all mywebsite reachable through a central address (ip) the deployment needs a service that will load balance and also expose the pods
+To achieve this we need another file preferably named mywebsite_service.yaml
 
----
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -647,37 +712,48 @@ spec:
   selector:
     app: nginx
   sessionAffinity: None
----
+```
 
-important portion on the service yml file are:
+Important portion on the service yml file are:
+```
 ports - to expose
 selector - to point which pods will be loadbalanced, here the “app” labels will be used
+```
 
-to apply the service file:
+#### To apply the service file:
+```
 kubectl apply -f mywebsite_service.yaml
+```
 
-to check services:
+#### To check services:
+```
 kubectl get services
+```
 
-VERY IMPORTANT
-once the loadbalancer service is created on the nodes, it creates a NodeBalancer on Cloud provider which will cost money
+#### VERY IMPORTANT
+Once the loadbalancer service is created on the nodes, it creates a NodeBalancer on Cloud provider which will cost money
 
-the nodebalancer external ip is the public ip of the cluster
+The nodebalancer external ip is the public ip of the cluster
 
-to see detailed info about the services:
+To see detailed info about the services:
+```
 kubectl describe services mywebsite_service
+```
 
-finally to update the running site across all containers running on all pods:
+Finally, to update the running site across all containers running on all pods:
 
-update the docker image on dockerhub
+Update the docker image on dockerhub
+```
 kubectl edit deployment mywebsite 
-and change the container image name and save
-thats it.. it automatically starts terminating and creating new pods with updated containers
+```
+And change the container image name and save
+Thats it.. it automatically starts terminating and creating new pods with updated containers.
+The loadbalancing updates automatically .
 
-the loadbalancing updates automatically 
-
---if using NodePort for deployment:
+If using NodePort for deployment:
+```
 kubectl port-forward service/nginx-service 7080:8080
+```
 
-DONT FORGET TO REMOVE ALL CLUSTERS AND NODEBALANCER AFTER TESTING.
+#### DONT FORGET TO REMOVE ALL CLUSTERS AND NODEBALANCER AFTER TESTING.
 
