@@ -230,60 +230,97 @@ helm upgrade -n portainer portainer portainer/portainer
 kubectl delete pod  traefik-f57964d5f-tvh9q --grace-period=0 --force -n kube-system
 ```
 
-Imperative Commands:
-Create an NGINX Pod:
+## Imperative Commands:
+#### Create an NGINX Pod:
+```
 kubectl run nginx --image=nginx
+```
 
-Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run):
+#### Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run):
+```
 kubectl run nginx --image=nginx --dry-run=client -o yaml
+```
 
-Create a deployment:
+#### Create a deployment:
+```
 kubectl create deployment nginx --image=nginx
+```
 
-Generate Deployment YAML file (-o yaml). Don't create it(--dry-run):
+#### Generate Deployment YAML file (-o yaml). Don't create it(--dry-run):
+```
 kubectl create deployment nginx --image=nginx --dry-run=client -o yaml
+```
 
-Generate Deployment YAML file (-o yaml). Don't create it(--dry-run) with 4 Replicas (--replicas=4):
+#### Generate Deployment YAML file (-o yaml). Don't create it(--dry-run) with 4 Replicas (--replicas=4):
+```
 kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > nginx-deployment.yaml
+```
 
 Save it to a file, make necessary changes to the file (for example, adding more replicas) and then create the deployment:
+```
 kubectl create -f nginx-deployment.yaml
+```
 
 Or,
 
 In k8s version 1.19+, we can specify the --replicas option to create a deployment with 4 replicas:
-kubectl create deployment nginx --image=nginx --replicas=4 --dry-run=client -o yaml > nginx-deployment.yaml
 
-Create a Service named redis-service of type ClusterIP to expose pod redis on port 6379:
+```
+kubectl create deployment nginx --image=nginx --replicas=4 --dry-run=client -o yaml > nginx-deployment.yaml
+```
+
+#### Create a Service named redis-service of type ClusterIP to expose pod redis on port 6379:
+```
 kubectl expose pod redis --port=6379 --name redis-service --dry-run=client -o yaml
+```
 
 (This will automatically use the pod's labels as selectors)
 
 Or,
 
+```
 kubectl create service clusterip redis --tcp=6379:6379 --dry-run=client -o yaml 
+```
 
 (This will not use the pods labels as selectors, instead it will assume selectors as app=redis. You cannot pass in selectors as an option. So it does not work very well if your pod has a different label set. So generate the file and modify the selectors before creating the service)
 
-Create a Service named nginx of type NodePort to expose pod nginx's port 80 on port 30080 on the nodes:
+#### Create a Service named nginx of type NodePort to expose pod nginx's port 80 on port 30080 on the nodes:
+```
 kubectl expose pod nginx --type=NodePort --port=80 --name=nginx-service --dry-run=client -o yaml
+```
 
 (This will automatically use the pod's labels as selectors, but you cannot specify the node port. You have to generate a definition file and then add the node port in manually before creating the service with the pod.)
 
 Or,
 
+```
 kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=client -o yaml
+```
 
 (This will not use the pods labels as selectors)
 
 Both the above commands have their own challenges. While one of it cannot accept a selector the other cannot accept a node port. I would recommend going with the kubectl expose command. If you need to specify a node port, generate a definition file using the same command and manually input the nodeport before creating the service.
 
-to manually schedule a pod on a specific node:
-add this below spec->containers section on pod definition  yaml--
-nodeName: node02
+#### To manually schedule a pod on a specific node:
+Add the **`nodeName`** section below spec->containers section on pod definition  yaml--
+```
+apiVersion: v1
+kind: Pod
+metadata:
+ name: nginx
+ labels:
+  name: nginx
+spec:
+ containers:
+ - name: nginx
+   image: nginx
+   ports:
+   - containerPort: 8080
+ nodeName: node02
+```
 
-another way to manually assign node without scheduler using manifest:
----
+Another way to manually assign node without scheduler using manifest:
+```
 apiVersion: v1
 kind: Binding
 metadata:
@@ -292,40 +329,79 @@ target:
   apiVersion: v1
   kind: Node
   name: node02
----
+```
 
-curl --header "COntent-Type:application/json" --request POST --data  '{"apiVersion":"v1", "kind":"Binding"...}' http://$SERVER/api/v1/default/pods/$PODNAME/binding/
+Then use the **`curl`** command to initiate a **`POST`** request
+```
+curl --header "Content-Type:application/json" --request POST --data  '{"apiVersion":"v1", "kind":"Binding"...}' http://$SERVER/api/v1/default/pods/$PODNAME/binding/
+```
 
-to find pods using selectors:
+#### To find pods using selectors:
+```
 kubectl get pods --selector env=dev
 kubectl get all --selector env=prod,bu=finance,tier=frontend
+```
 
-to add taint to a node:
+#### To add taint to a node:
+```
 kubectl taint nodes <node-name> key=value:taint-effect
 kubectl taint node node01 app=blue:NoSchedule
+```
 
-to add toleration to a pod:
-add this below spec->containers section inside pod definition  yaml:
-tolerations:
+#### To add toleration to a pod:
+Add the **`tolerations`** section below spec->containers section inside pod definition  yaml:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+ name: myapp-pod
+spec:
+ containers:
+ - name: nginx-container
+   image: nginx
+ tolerations:
  - key: "app"
    operator: "Equal"
    value: "blue"
    effect: "NoSchedule"
+```
 
-to label nodes:
+#### To label nodes:
+```
 kubectl label nodes <node-name> <label-key>=<label-value>
 kubectl label nodes node-1 size=Large
+```
 
-then add this below spec->containers section inside pod definition yaml:
-nodeSelector:
+Then add the **`nodeSelector`** section below spec->containers section inside pod definition yaml:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+ name: myapp-pod
+spec:
+ containers:
+ - name: data-processor
+   image: data-processor
+ nodeSelector:
   size: Large
+```
 
-Affinity:
+#### Affinity:
 With Node Selectors we cannot provide the advance expressions.
 The primary feature of Node Affinity is to ensure that the pods are hosted on particular nodes.
 
-add this below spec->containers section inside pod definition yaml:
-affinity:
+Add the **`Affinity`** section below spec->containers section inside pod definition yaml:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+ name: myapp-pod
+spec:
+ containers:
+ - name: data-processor
+   image: data-processor
+ affinity:
    nodeAffinity:
      requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
@@ -335,9 +411,18 @@ affinity:
             values: 
             - Large
             - Medium
+```
 or,
-
-affinity:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+ name: myapp-pod
+spec:
+ containers:
+ - name: data-processor
+   image: data-processor
+ affinity:
    nodeAffinity:
      requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
@@ -346,21 +431,31 @@ affinity:
             operator: NotIn
             values: 
             - Small
+```
 or,
-
-affinity:
+```
+apiVersion: v1
+kind: Pod
+metadata:
+ name: myapp-pod
+spec:
+ containers:
+ - name: data-processor
+   image: data-processor
+ affinity:
    nodeAffinity:
      requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
           - key: size
             operator: Exists
+```
 
-Node Affinity Types
+#### Node Affinity Types
+```
 requiredDuringSchedulingIgnoredDuringExecution
 preferredDuringSchedulingIgnoredDuringExecution
-
-
+```
 
 ---
 minikube:
