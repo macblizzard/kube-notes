@@ -9,9 +9,9 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 ## Kubernetes Commands:
 #### to see the nodes:
-´´´bash
+```bash
 kubectl get nodes
-´´´
+```
 
 to see the cluster info:
 kubectl cluster-info
