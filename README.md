@@ -9,164 +9,226 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 <h1></h1>
 
 ## Kubernetes Commands:
-#### to see the nodes:
+#### To see the nodes:
 ```
 kubectl get nodes
 ```
 
-#### to see the cluster info:
+#### To see the cluster info:
 ```
 kubectl cluster-info
 ```
 
-#### to run a docker container on a pod:
+#### To run a docker container on a pod:
 ```
 kubectl run kubetest —image=nginx:latest —port=80
 ```
 
-#### to see running pods:
+#### To see running pods:
 ```
 kubectl get pods
 ```
 
-#### to see detailed pod info:
+#### To see detailed pod info:
 ```
 kubectl get pods -o wide
 ```
 
-#### to see all info about running pods:
+#### To see all info about running pods:
 ```
 kubectl describe pods
 ```
 
-#### to delete pods:
+#### To delete pods:
 ```
 kubectl delete pods mywebsite
 ```
 
-#### to apply a kubernetes deployment file:
+#### To apply a kubernetes deployment file:
 ```
 kubectl apply -f mydeplyment.yaml
 ```
 
-#### to check running deployments:
+#### To check running deployments:
 ```
 kubectl get deployments 
 ```
 
-#### to increase number of replicas running the deployment:
+#### To increase number of replicas running the deployment:
 Edit the running deployment with:
 ```
 kubectl edit deployment mydeployment
 ```
 
-change number of “replicas” on that config and save the file and check pods again:
+Change number of “replicas” on that config and save the file and check pods again:
+```
 kubectl get pods (number of running pods should change)
+```
 
-to see detailed info about the services:
+#### To see detailed info about the services:
+```
 kubectl describe services mywebsite_service
+```
 
-to apply a kubernetes deployment file:
+#### To apply a kubernetes deployment file:
+```
 kubectl apply -f mydeplyment.yaml
+```
 
-to check running deployments:
+#### To check running deployments:
+```
 kubectl get deployments
+```
 
-to edit the running deployment:
+#### To edit the running deployment:
+```
 kubectl edit deployment mydeployment
+```
 
-to scale replicas of a deployment:
+#### To scale replicas of a deployment:
+```
 kubectl scale --replicas=3 deployment web-app
+```
 
-to restart a pod:
+#### To restart a pod:
+```
 kubectl scale deployment traefik --replicas=0 -n traefik
 kubectl scale deployment traefik --replicas=1 -n traefik
+```
 
-to create a deployment:
+#### To create a deployment:
+```
 kubectl create deployment nginx --image=nginx
+```
 
-to expose a service:
+#### To expose a service:
+```
 kubectl expose deployment nginx --type=NodePort --port=8080
+```
 
-to check services:
+#### To check services:
+```
 kubectl get services
+```
 
-to see all infos about current namespace:
+#### To see all infos about current namespace:
+```
 kubectl get all
+```
 
-to see whats going on: (log)
+#### To see whats going on: (log)
+```
 kubectl get events
+```
 
-to see cpu and memory usage of pods from all namespaces:
+#### To see cpu and memory usage of pods from all namespaces:
+```
 kubectl top pods -A
+```
 
-to see all namespaces:
+#### To see all namespaces:
+```
 kubectl get namespaces
 or,
 kubectl get ns
+```
 
-to create namespace:
+#### To create namespace:
+```
 kubectl create namespace test
+```
 
-To set the namespace for a current request, use the --namespace flag:
+#### To set the namespace for a current request, use the --namespace flag:
+```
 kubectl run nginx --image=nginx --namespace=<insert-namespace-name-here>
 kubectl get pods --namespace=<insert-namespace-name-here>
+```
 
-to change to another namespace:
+#### To change to another namespace:
+```
 kubectl config set-context --current --namespace=<insert-namespace-name-here>
 or,
 kn test (if zsh is configured for that)
+```
 
-going back to default namespace:
+#### To go back to default namespace:
+```
 knd (if zsh is configured for that)
+```
 
-to delete a namespace:
+#### To delete a namespace:
+```
 kubectl delete ns test
+```
 
-to delete multiple nodes at once (eg. wordpress):
+#### To delete multiple nodes at once (eg. wordpress):
+```
 kubectl get pods -n default | awk '/wordpress/{print $1}' | xargs kubectl delete -n default pod
 or,
 kubectl get pods | awk '/wordpress/{print $1}' | xargs kubectl delete pod
+```
 
-to create sample deployment yaml from command:
+#### To create sample deployment yaml from command:
+```
 kubectl create deploy nginx --image nginx --dry-run=client -o yaml > deployment.yaml
+```
 
-to enable Horizontal Pod Autoscale (HPA) for a deployment eg. nginx:
+#### To enable Horizontal Pod Autoscale (HPA) for a deployment eg. nginx:
+```
 kubectl autoscale deploy nginx --min 1 --max 5 --cpu-percent 20
+```
 
-to test autoscale use siege to simulate traffic:
+#### To test autoscale use siege to simulate traffic:
+```
 sudo apt install siege -y
 sample command:
 siege -q -c 5 -t 2m http://80.0.0.103
+```
 
-check live pod cpu utilizations by:
+#### To check live pod cpu utilizations by:
+```
 watch kubectl top pods
+```
 
-check live HPA updates and pod creations:
+#### To check live HPA updates and pod creations:
+```
 watch kubectl get all
+```
 
-to check secrets:
+#### To check secrets:
+```
 kubectl get secrets
+```
 
-decoding secrets:
+#### To decode secrets:
+```
 kubectl get secret db-user-pass -o jsonpath='{.data}'
 kubectl get secret local-example-com-tls -o jsonpath='{.data}'  | awk -F: '{ print $2 }' | tr -d ',""' | sed 's/tls.key//' | base64 --decode > /tmp/tls.crt
 kubectl get secret local-example-com-tls -o jsonpath='{.data}'  | awk -F: '{ print $3 }' | tr -d '"}' | base64 --decode > /tmp/tls.key
+```
 
-to get container image versions in all namespaces:
+#### To get container image versions in all namespaces:
+```
 kubectl get pods --all-namespaces -o jsonpath="{.items[*].spec.containers[*].image}" |\
 tr -s '[[:space:]]' '\n' |\
 sort |\
 uniq -c
+```
 
-to update helm repo:
+#### To update helm repo:
+```
 helm repo update
+```
 
-to upgrade applications installed using helm:
+#### To upgrade applications installed using helm:
+```
 helm upgrade -n portainer portainer portainer/portainer
+```
 
-to delete a pod stuck in terminating status forcefully:
+#### To delete a pod stuck in terminating status forcefully:
+```
 kubectl delete pod  traefik-f57964d5f-tvh9q --grace-period=0 --force -n kube-system
+```
 
 Imperative Commands:
 Create an NGINX Pod:
