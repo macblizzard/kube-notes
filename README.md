@@ -11,7 +11,7 @@ https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 #### to see the nodes:
 ´´´fish
 kubectl get nodes
-´´´fish
+´´´
 
 to see the cluster info:
 kubectl cluster-info
