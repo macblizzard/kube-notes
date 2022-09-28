@@ -116,7 +116,7 @@ kubectl get services
 kubectl get all
 ```
 
-#### To see whats going on: (log)
+#### To see all activity:
 ```
 kubectl get events
 ```
@@ -596,6 +596,11 @@ preferredDuringSchedulingIgnoredDuringExecution
 kubectl run static-busybox --image=busybox --restart=Never --dry-run=client -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/busybox.yaml
 ```
 Static Pods must be yaml files placed inside node directory /etc/kubernetes/manifests, and kubelet will create the Pod automatically.
+
+#### To view kube-scheduler logs:
+```
+kubectl logs kube-scheduler-controlplane -n kube-system
+```
 
 
 
