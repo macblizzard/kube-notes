@@ -290,6 +290,10 @@ etcdctl endpoint status
 etcdctl alarm list
 ```
 
+#### To replace a running pod with pod definition:
+```
+kubectl replace --force -f /tmp/kubectl-edit-28112.yaml
+```
 
 ## Imperative Commands:
 #### Create an NGINX Pod:
@@ -472,6 +476,11 @@ kubectl get all --selector env=prod,bu=finance,tier=frontend
 kubectl taint nodes <node-name> key=value:taint-effect
 kubectl taint node node01 app=blue:NoSchedule
 ```
+There are 3 taint effects
+
+- NoSchedule
+- PreferNoSchedule
+- NoExecute
 
 #### To add toleration to a pod:
 Add the **`tolerations`** section below spec->containers section inside pod definition  yaml:
@@ -581,6 +590,14 @@ spec:
 requiredDuringSchedulingIgnoredDuringExecution
 preferredDuringSchedulingIgnoredDuringExecution
 ```
+
+#### To create a Static Pod on a Node:
+```
+kubectl run static-busybox --image=busybox --restart=Never --dry-run=client -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/busybox.yaml
+```
+Static Pods must be yaml files placed inside node directory /etc/kubernetes/manifests, and kubelet will create the Pod automatically.
+
+
 
 ---
 ## Minikube:
