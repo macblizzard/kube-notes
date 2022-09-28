@@ -230,6 +230,67 @@ helm upgrade -n portainer portainer portainer/portainer
 kubectl delete pod  traefik-f57964d5f-tvh9q --grace-period=0 --force -n kube-system
 ```
 
+#### To get replicaset:
+```
+kubectl get replicaset
+or,
+kubectl get rs
+```
+
+#### To get endpoints:
+```
+kubectl get endpoints 
+or,
+kubectl get ep
+```
+
+#### To get explanation of anything:
+```
+kubectl explain deployment 
+```
+Or to see explanation of any specific section of a resource:
+```
+kubectl explain deployment.spec.template.spec.nodeName
+```
+
+#### To see all resource definitions:
+```
+kubectl api-resources
+kubectl api-resources | grep -i net
+```
+
+#### To see network policies:
+```
+kubectl get netpol,cnp,ccnp
+ccp - ciliumnetworkpolicy
+ccnp - ciliumclusterwidenetworkpolicy
+kubectl get netpol allow-egress -o yaml
+```
+
+#### To check cilium implementation and understand network policies:
+```
+https://editor.cilium.io
+```
+
+#### To extend verbosity level:
+```
+kubectl get pods -A -v=9
+```
+
+#### To wait or watch updating outputs of any kubectl command:
+```
+kubectl get pods -w
+```
+
+#### For etcd related issues:
+Google etcd cheatsheet
+```
+apt install etcd-client
+etcdctl endpoint status
+etcdctl alarm list
+```
+
+
 ## Imperative Commands:
 #### Create an NGINX Pod:
 ```
