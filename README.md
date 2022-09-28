@@ -397,6 +397,70 @@ Then use the **`curl`** command to initiate a **`POST`** request
 curl --header "Content-Type:application/json" --request POST --data  '{"apiVersion":"v1", "kind":"Binding"...}' http://$SERVER/api/v1/default/pods/$PODNAME/binding/
 ```
 
+#### To add label selector to pod definition:
+```
+ apiVersion: v1
+ kind: Pod
+ metadata:
+  name: simple-webapp
+  labels:
+    env: dev
+    bu: finance
+    tier: frontend
+ spec:
+  containers:
+  - name: simple-webapp
+    image: simple-webapp
+    ports:
+    - containerPort: 8080
+```
+
+#### To add label selector to deployment definition:
+```
+ apiVersion: apps/v1
+ kind: ReplicaSet
+ metadata:
+   name: simple-webapp
+   labels:
+     env: dev
+     bu: finance
+     tier: frontend
+ spec:
+  replicas: 3
+  selector:
+    matchLabels:
+     env: dev
+     bu: finance
+     tier: frontend
+ template:
+   metadata:
+     labels:
+       env: dev
+       bu: finance
+       tier: frontend
+   spec:
+     containers:
+     - name: simple-webapp
+       image: simple-webapp   
+```
+
+#### To add label selector to service definition:
+```
+  apiVersion: v1
+  kind: Service
+  metadata:
+   name: my-service
+  spec:
+   selector:
+     env: dev
+     bu: finance
+     tier: frontend
+   ports:
+   - protocol: TCP
+     port: 80
+     targetPort: 9376 
+```
+
 #### To find pods using selectors:
 ```
 kubectl get pods --selector env=dev
