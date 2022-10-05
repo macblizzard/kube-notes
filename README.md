@@ -658,6 +658,33 @@ When a temp file is saved with the edit, then replace the running pod with edite
 kubectl replace --force -f /tmp/kubectl-edit-3321164344.yaml
 ```
 
+#### To create a secret containing multiple key and values
+```
+kubectl create secret generic db-secret --from-literal=DB_Host=sql01 --from-literal=DB_User=root --from-literal=DB_Password=password123
+```
+
+#### To add secretRef and configMapRef on pod definition
+```
+containers:
+  - image: kodekloud/simple-webapp-mysql
+    imagePullPolicy: Always
+    name: webapp
+    envFrom:
+    - secretRef:
+        name: db-secret
+```
+
+```
+containers:
+  - image: kodekloud/webapp-color
+    imagePullPolicy: Always
+    name: webapp
+    envFrom:
+    - configMapRef:
+        name: webapp-color-config
+```
+
+
 
 
 ---
