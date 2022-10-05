@@ -612,6 +612,35 @@ kubectl rollout history deployment/myapp-deployment
 kubectl rollout undo deployment/myapp-deployment
 ```
 
+#### Commands and Arguments
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: command-demo
+  labels:
+    purpose: demonstrate-command
+spec:
+  containers:
+  - name: command-demo-container
+    image: ubuntu
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo hello; sleep 10;done"]
+  restartPolicy: OnFailure
+```
+"command" in Kubernetes is similar to Entrypoints in Docker, which is the default command to run when the pod is initialized.
+"args" in Kubernetes is similar to CMD in Docker, which can be replaced during execution.
+
+#### curl-test.sh -to test something out of a pod
+```
+for i in {1..35}; do
+   kubectl exec --namespace=kube-public curl -- sh -c 'test=`wget -qO- -T 2  http://webapp-test/info 2>&1` && echo "$test OK" || echo "Failed"';
+   echo ""
+done
+```
+Image used for curl: byrnedo/alpine-curl:latest
+
+
 
 
 ---
