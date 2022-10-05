@@ -651,6 +651,13 @@ kubectl run webapp-green --image=kodekloud/webapp-color -- --color=green
 kubectl run webapp-green --image=kodekloud/webapp-color --command -- python app.py --color=green
 ```
 
+#### To update a pod with changed values that is not possible with edit
+Edit the pod with "kubectl edit pod podname".
+When a temp file is saved with the edit, then replace the running pod with edited one.
+```
+kubectl replace --force -f /tmp/kubectl-edit-3321164344.yaml
+```
+
 
 
 ---
