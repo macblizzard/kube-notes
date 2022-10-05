@@ -602,6 +602,16 @@ Static Pods must be yaml files placed inside node directory /etc/kubernetes/mani
 kubectl logs kube-scheduler-controlplane -n kube-system
 ```
 
+#### To rollout and rollback a deployment
+```
+kubectl set image deployment/myapp-deployment nginx=nginx:1.9.1
+or, just change image version on deployment.yaml and "kubectl apply -f deployment.yaml"
+
+kubectl rollout status deployment/myapp-deployment
+kubectl rollout history deployment/myapp-deployment
+kubectl rollout undo deployment/myapp-deployment
+```
+
 
 
 ---
