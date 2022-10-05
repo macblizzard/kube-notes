@@ -640,6 +640,16 @@ done
 ```
 Image used for curl: byrnedo/alpine-curl:latest
 
+#### To get help for any kubectl command
+```
+kubectl run --help
+```
+
+#### To add a command or argument while running a pod
+```
+kubectl run webapp-green --image=kodekloud/webapp-color -- --color=green
+kubectl run webapp-green --image=kodekloud/webapp-color --command -- python app.py --color=green
+```
 
 
 
