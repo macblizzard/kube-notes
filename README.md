@@ -718,6 +718,26 @@ initContainers:
   command: ['sh', '-c', 'until nslookup mydb; do echo waiting for mydb; sleep 2; done;']
 ```
 
+#### To move running pods to different node for Node maintenance
+```
+kubectl drain node-1
+```
+This will gracefully terminate all running pods on the node and recreate them on a different node, 
+and mark the node as SchedulingDisabled.
+
+```
+kubectl uncordon node-1
+```
+After the maintenance or reboot of the node, this command remove the SchedulingDisabled tag on the node,
+and node will be ready again for scheduling. But pods moved to other nodes while draining will not be re-scheduled on this node automatically.
+But new pods will start to schedule on this pod after uncordoning.
+
+```
+kubectl cordon node-2
+```
+This will mark the node as SchedulingDisabled, and new pods will not be scheduled on this node.
+
+
 
 
 ---
