@@ -721,6 +721,10 @@ initContainers:
 #### To move running pods to different node for Node maintenance
 ```
 kubectl drain node-1
+or,
+kubectl drain node-1 --ignore-daemonsets
+or,
+kubectl drain node-1 --ignore-daemonsets --force   # this will remove any running pod that is not part of a replicaset, etc.
 ```
 This will gracefully terminate all running pods on the node and recreate them on a different node, 
 and mark the node as SchedulingDisabled.
@@ -735,7 +739,8 @@ But new pods will start to schedule on this pod after uncordoning.
 ```
 kubectl cordon node-2
 ```
-This will mark the node as SchedulingDisabled, and new pods will not be scheduled on this node.
+This will mark the node as SchedulingDisabled, existing pods will keep running on same node,
+but all new pods will not be scheduled on this node.
 
 
 
