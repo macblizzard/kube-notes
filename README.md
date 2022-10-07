@@ -743,6 +743,58 @@ This will mark the node as SchedulingDisabled, existing pods will keep running o
 but all new pods will not be scheduled on this node.
 
 
+#### Upgrading Cluster (Using kubeadm)
+Refer to the kubernetes.io/docs and search for "kubeadm upgrade".
+To upgrade a cluster first the master node needs to be upgraded then the worker nodes.
+
+On Master node:
+```
+kubectl get nodes
+kubectl get pods -o wide
+kubectl drain controlplane --ignore-daemonsets
+
+apt update
+apt-cache madison kubeadm
+
+apt-mark unhold kubeadm && \
+apt-get update && apt-get install -y kubeadm=1.24.0-00 && \
+apt-mark hold kubeadm
+
+sudo kubeadm upgrade plan
+sudo kubeadm upgrade apply v1.24.0
+ 
+apt-mark unhold kubelet kubectl && \
+apt-get update && apt-get install -y kubelet=1.24.0-00 kubectl=1.24.0-00 && \
+apt-mark hold kubelet kubectl
+
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+kubectl uncordon controlplane
+
+kubectl drain node01 --ignore-daemonsets          # before starting upgrade on worker node
+kubectl uncordon node01                           # after upgrade of worker node is finished
+```
+
+On Worker nodes:
+```
+apt update
+
+apt-mark unhold kubeadm && \
+apt-get update && apt-get install -y kubeadm=1.24.0-00 && \
+apt-mark hold kubeadm
+
+sudo kubeadm upgrade node
+
+apt-mark unhold kubelet kubectl && \
+apt-get update && apt-get install -y kubelet=1.24.0-00 kubectl=1.24.0-00 && \
+apt-mark hold kubelet kubectl
+
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+```
+
+
 
 
 ---
